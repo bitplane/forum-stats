@@ -39,7 +39,8 @@ def detect(doc):
     if tree.xpath("//script[contains(@src, 'ipb_forum.js')]") or \
        tree.xpath("//link[@rel='stylesheet' and contains(@href, 'ipb_common.css')]") or \
        tree.xpath("//p[@id='copyright']/a[@href='http://www.invisionpower.com/products/board/' and contains(@title,'Invision')]") or \
-       tree.xpath("//*[contains(@class, 'ipsType_small')]"):
+       tree.xpath("//*[contains(@class, 'ipsType_small')]") or \
+       tree.xpath("//table[@class='ipbtable']"):
         return ('Invision', 'Unknown') # new invision
 
     match = tree.xpath("//a[@href='http://www.simplemachines.org/' and @title='Simple Machines Forum']")
@@ -75,6 +76,9 @@ def detect(doc):
     if tree.xpath("//p[@class='copyright']/a[@href='http://www.woltlab.com']/strong"):
         return ('Burning Board', 'Unknown')
 
+    if tree.xpath("//div[@class='copyright']/a[@href='http://vesvalo.net']"):
+        return ('vesvalo', 'Unknown')
+
     if tree.xpath("//div[@class='yafactiveusers']"):
         return ('YAF', 'Unknown')
 
@@ -83,9 +87,20 @@ def detect(doc):
         try:
             version = match[0].get("content").split("BMForum ")[1]
         except IndexError:
-            version = "Unknown"
-        return ("BMForum", version)
+            version = 'Unknown'
+        return ('BMForum', version)
 
+    match = tree.xpath("//head/meta[@name='GENERATOR' and contains(@content,'CommunityServer')]")
+    if match:
+        try:
+            version = match[0].get("content").split('CommunityServer ')[1]
+        except IndexError:
+            version = 'Unknown'
+        return ("CommunityServer", version)
+
+
+    if tree.xpath("//span[@class='PhorumNavHeading']"):
+        return ('Phorum', 'Unknown')
 
     if "Powered by: vBulletin" in doc:
         return ('vBulletin', 'Unknown')
@@ -93,8 +108,20 @@ def detect(doc):
     if 'Powered by <a href="http://www.invisionboard.com"' in doc:
         return ('Invision', '1.x')
 
+    if 'Powered by <a href="http://www.phpbb.com/">phpBB' in doc:
+        return ('phpBB', 'Unknown')
+
+    if 'but also helps build interest, traffic and use of phpBB 2.0.' in doc:
+        return ('phpBB', '2.0')
+
     if 'Powered by <a href="http://www.infopop.com">Infopop Corporation</a><br />Ultimate Bulletin Board' in doc:
         return ('UBB', 'Unknown')
+
+    if 'Powered by CBACK Forum' in doc:
+        return ('CBACK', 'Unknown')
+
+    if "<a href='http://www.fusionbb.com'>FusionBB</a>&trade;" in doc:
+        return ('FusionBB', 'Unknown')
 
     #print etree.tostring(tree)
     return ('Unknown', 'Unknown')
