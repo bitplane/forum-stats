@@ -2,29 +2,16 @@
 """
 """
 import sys
-import elementtidy.TidyHTMLTreeBuilder as TB
-from StringIO import StringIO
 
 from lxml import etree
+from lxml.html.soupparser import fromstring
 
 def detect(doc):
     """Detect the software that generated the given HTML document"""
-    # Fix damaged HTML using TidyHTMLTreeBuilder
-    tree = TB.parse(StringIO(doc))
-    # Back to basic HTML from XHTML, 'cause it's easier to handle
-    XHTML = "{http://www.w3.org/1999/xhtml}"
-    for elem in tree.getiterator():
-        if elem.tag.startswith(XHTML):
-            elem.tag = elem.tag[len(XHTML):]
 
-    # Now convert this into an element tree. Ugly hackery, but whatever.
-    strHTML = StringIO()
-    tree.write(strHTML)
-    #print strHTML.getvalue()
-    tree = etree.HTML(strHTML.getvalue())
-    strHTML.close()
+    tree = fromstring(doc)
 
-    match = tree.xpath("/html/head/meta[@name='generator' and contains(@content,'vBulletin')]")
+    match = tree.xpath("./head/meta[@name='generator' and contains(@content,'vBulletin')]")
     if match:
         try:
             version = match[0].get("content").split()[1]
@@ -32,7 +19,7 @@ def detect(doc):
             version = "Unknown"
         return ("vBulletin", version)
 
-    if tree.xpath("/html/head/meta[@name='copyright' and contains(@content,'phpBB')]"):
+    if tree.xpath("./head/meta[@name='copyright' and contains(@content,'phpBB')]"):
         return ('phpBB', 'Unknown')
 
     if tree.xpath("//script[contains(@src, 'vbulletin_global.js')]"):
@@ -41,7 +28,7 @@ def detect(doc):
     if tree.xpath("//script[contains(@src, 'ipb_forum.js')]"):
         return ('IP.B', 'Unknown') # new invision
 
-    match = tree.xpath("/html/head/meta[@name='generator' and contains(@content, 'Web Wiz Forums')]")
+    match = tree.xpath("./head/meta[@name='generator' and contains(@content, 'Web Wiz Forums')]")
     if match:
         try:
             version = match[0].get('content')[15:]
@@ -51,6 +38,9 @@ def detect(doc):
 
     if tree.xpath("//span[@class='smText']"):
         return ('Web Wiz Forums', 'Unknown')
+
+    if tree.xpath("//a[@class='forumlink']") and tree.xpath("//span[@class='gensmall']"):
+        return ('phpBB', 'Unknown')
 
     return ('Unknown', 'Unknown')
 
