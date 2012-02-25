@@ -14,6 +14,10 @@ wget -qO- $URL | zcat    | grep ExternalPage | grep -i forum | sed $PARSE > dmoz
 
 if [ $? == 0 ]
 then
+    echo 'Sorting and removing duplicates...'
+    mv dmoz.txt dmoz.tmp
+    cat dmoz.tmp | sort | uniq > dmoz.txt
+    rm dmoz.tmp
     echo 'All done!'
 else
     echo 'Ugh, something went wrong :('
