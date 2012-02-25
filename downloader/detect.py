@@ -8,8 +8,10 @@ from lxml.html.soupparser import fromstring
 
 def detect(doc):
     """Detect the software that generated the given HTML document"""
-
-    tree = fromstring(doc)
+    try:
+        tree = fromstring(doc)
+    except:
+        return ('Error', 'Error')
 
     match = tree.xpath("//head/meta[@name='generator' and contains(@content,'vBulletin')]")
     if match:
@@ -70,11 +72,29 @@ def detect(doc):
     if tree.xpath("//a[@class='forumlink']") and tree.xpath("//span[@class='gensmall']"):
         return ('phpBB', 'Unknown')
 
+    if tree.xpath("//p[@class='copyright']/a[@href='http://www.woltlab.com']/strong"):
+        return ('Burning Board', 'Unknown')
+
+    if tree.xpath("//div[@class='yafactiveusers']"):
+        return ('YAF', 'Unknown')
+
+    match = tree.xpath("//head/meta[@name='generator' and contains(@content,'BMForum')]")
+    if match:
+        try:
+            version = match[0].get("content").split("BMForum ")[1]
+        except IndexError:
+            version = "Unknown"
+        return ("BMForum", version)
+
+
     if "Powered by: vBulletin" in doc:
         return ('vBulletin', 'Unknown')
 
     if 'Powered by <a href="http://www.invisionboard.com"' in doc:
         return ('Invision', '1.x')
+
+    if 'Powered by <a href="http://www.infopop.com">Infopop Corporation</a><br />Ultimate Bulletin Board' in doc:
+        return ('UBB', 'Unknown')
 
     #print etree.tostring(tree)
     return ('Unknown', 'Unknown')
