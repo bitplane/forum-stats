@@ -19,6 +19,15 @@ def detect(doc):
             version = "Unknown"
         return ("vBulletin", version)
 
+    if tree.xpath("//body[@id='phpBB']"):
+        return ('phpBB', 'Unknown')
+
+    if tree.xpath("//td[@class='rowpic']") and \
+       tree.xpath("//td[@class='gensmall']") and \
+       tree.xpath("//a[contains(@href, 'index.php?c=')]") and \
+       tree.xpath("//a[contains(@href, 'viewforum.php?')]"):
+        return ('phpBB', 'Unknown')
+
     if tree.xpath("//head/meta[@name='copyright' and contains(@content,'phpBB')]"):
         return ('phpBB', 'Unknown')
 
@@ -31,9 +40,6 @@ def detect(doc):
        tree.xpath("//*[contains(@class, 'ipsType_small')]"):
         return ('Invision', 'Unknown') # new invision
 
-
-
-
     match = tree.xpath("//a[@href='http://www.simplemachines.org/' and @title='Simple Machines Forum']")
     if match and len(match[0].text.split('SMF ')) > 1:
         return ('SMF', match[0].text.split('SMF ')[-1])
@@ -43,6 +49,9 @@ def detect(doc):
 
     if tree.xpath("//span[@id='copyright']/*[@target='_blank' and contains(.,'MyBB')]"):
         return ('MyBB', 'Unknown')
+
+    if tree.xpath("//a[contains(@href, 'gforum.cgi?do')]"):
+        return ('Gossamer Forum', 'Unknown')
 
     match = tree.xpath("//head/meta[@name='generator' and contains(@content, 'Web Wiz Forums')]")
     if match:
@@ -61,7 +70,13 @@ def detect(doc):
     if tree.xpath("//a[@class='forumlink']") and tree.xpath("//span[@class='gensmall']"):
         return ('phpBB', 'Unknown')
 
-    print etree.tostring(tree)
+    if "Powered by: vBulletin" in doc:
+        return ('vBulletin', 'Unknown')
+
+    if 'Powered by <a href="http://www.invisionboard.com"' in doc:
+        return ('Invision', '1.x')
+
+    #print etree.tostring(tree)
     return ('Unknown', 'Unknown')
 
 # If launched from the command line, use stdin
