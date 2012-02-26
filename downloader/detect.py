@@ -21,7 +21,7 @@ def detect(doc):
             version = "Unknown"
         return ("vBulletin", version)
 
-    if tree.xpath("//body[@id='phpBB']"):
+    if tree.xpath("//body[@id='phpBB' or @id='phpbb']"):
         return ('phpBB', 'Unknown')
 
     if tree.xpath("//td[@class='rowpic']") and \
@@ -41,7 +41,7 @@ def detect(doc):
        tree.xpath("//p[@id='copyright']/a[@href='http://www.invisionpower.com/products/board/' and contains(@title,'Invision')]") or \
        tree.xpath("//*[contains(@class, 'ipsType_small')]") or \
        tree.xpath("//table[@class='ipbtable']"):
-        return ('Invision', 'Unknown') # new invision
+        return ('Invision', 'Unknown')
 
     match = tree.xpath("//a[@href='http://www.simplemachines.org/' and @title='Simple Machines Forum']")
     if match and len(match[0].text.split('SMF ')) > 1:
@@ -99,7 +99,8 @@ def detect(doc):
         return ("CommunityServer", version)
 
 
-    if tree.xpath("//span[@class='PhorumNavHeading']"):
+    if tree.xpath("//span[@class='PhorumNavHeading']") or \
+       tree.xpath("//div[@class='PhorumFooterPlug']"):
         return ('Phorum', 'Unknown')
 
     if "Powered by: vBulletin" in doc:
@@ -122,6 +123,9 @@ def detect(doc):
 
     if "<a href='http://www.fusionbb.com'>FusionBB</a>&trade;" in doc:
         return ('FusionBB', 'Unknown')
+
+    if 'Powered By: Snitz Forums 2000' in doc:
+        return ('Snitz Forums 2000', 'Unknown')
 
     #print etree.tostring(tree)
     return ('Unknown', 'Unknown')
