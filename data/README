@@ -1,0 +1,4 @@
+All the intermediate data lives in this tree.
+
+To keep it all nice and simple I've decided against using a proper database, the
+filesystem is good enough. 

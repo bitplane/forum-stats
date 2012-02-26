@@ -1,5 +1,10 @@
-Forum Stats by Gaz Davidson 2012
+---------------------------------------------------------------------------
+ Forum Stats by Gaz Davidson 2012
+---------------------------------------------------------------------------
 
+---------------------------------------------------------------------------
+0. Intro
+---------------------------------------------------------------------------
 Over the years I've talked a lot of crap about when the best time to create
 a new subforum is, warning about the dangers of killing a small and fragile 
 community by splitting it too early.
@@ -24,9 +29,33 @@ This project contains a bunch of tools to gather stats from different types
 of web forums; the frequency of posts, subforum creation dates, the numbers
 of users joining and leaving and so on. Once I've got enough data then I'll 
 analyze it and publish my conclusions. Hopefully, they'll support the noise 
-I've been spouting for years, but whether I'm right or wrong I'll will have
-the satisfaction of being a big know-it-all either way. I'll also gain some
-experience in doing science and learn a bit more about statistics along the
-way.
+I've been spouting for years. If not, then at least I can take satisfaction 
+in being a big know-it-all. I'll also gain some experience in doing science
+and learn a bit more about statistics along the way.
 
-So enough chatter, let science commence!
+Hopefully.
+
+---------------------------------------------------------------------------
+1. Workflow
+---------------------------------------------------------------------------
+WIP:
+
+1) Gather data:
+ * start with a list of known good forum URLs
+ * any thread can do any work.
+ * work from back to front, so new posts are done last?
+
+a) Use the appropriate parser to find the forum's index page.
+b) Save the list of subforums.
+c) Save the list of threads in each subforum.
+d) Visit individual threads, save post times and authors.
+
+2) Create statistics
+
+3) Draw pretty graphs
+
+---------------------------------------------------------------------------
+2. Copyrights
+---------------------------------------------------------------------------
+
+See COPYING. 
