@@ -1,0 +1,6 @@
+There are a bunch of files missing from here, they were mostly nasty sites that
+have malformed HTML and stuff that were causing libxml to choke. Now I've moved
+over to BeautifulSoup they aren't so useful, plus they're not mine to give away
+anyway. 
+
+I'm keeping this dir around as it may come in useful later on.
